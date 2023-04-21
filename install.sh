@@ -16,6 +16,10 @@ node -v
 echo "NPM version:"
 npm -v
 
+# Install node dependencies
+echo "Installing node dependencies"
+npm install
+
 # Install essentials
 echo "Installing essentials"
 sudo apt install -y build-essential
@@ -54,9 +58,5 @@ echo "Installing library"
 make -j1  # use -j1 on Raspberry Pi 3 or earlier devices
 sudo make install
 sudo ldconfig # this is only necessary on the first build
-
-# Install node dependencies
-echo "Installing node dependencies"
-npm install
 
 echo "Done"
