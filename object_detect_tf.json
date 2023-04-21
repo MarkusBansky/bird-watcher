@@ -4,8 +4,8 @@
     "refresh_rate": 10,
     "confidence_threshold": 0.5,
     "overlap_threshold": 0.5,
-    "model_file": "~/models/detect.tflite",
-    "labels_file": "~/models/labelmap.txt",
+    "model_file": "./models/detect.tflite",
+    "labels_file": "./models/labelmap.txt",
     "verbose": 1
   },
   "object_detect_draw_cv": {

@@ -3,9 +3,13 @@ const express = require('express');
 const app = express();
 
 // Additional required modules
+const { spawn } = require('node:child_process');
 const path = require('path');
-const shell = require('shelljs');
 const fs = require('fs');
+
+// some propeties
+const controller = new AbortController();
+const { signal } = controller;
 
 // Set up the server
 app.engine('.html', require('ejs').__express);
@@ -24,8 +28,17 @@ app.get('/', function (req, res) {
 });
 
 // Run background process
-const detectProcess = shell
-    .exec('libcamera-detect -t 0 -o ./public/images/bird-%06d.jpg --lores-width 400 --lores-height 300 --post-process-file object_detect_tf.json --object bird');
+const camProcess = spawn('node', ['background.js'], {
+    detached: true,
+    stdio: 'ignore',
+    signal
+});
+// detach from the child process
+camProcess.unref();
+// shutdown callback
+process.on('exit', function () {
+    camProcess.abort();
+});
 
 /* istanbul ignore next */
 if (!module.parent) {
