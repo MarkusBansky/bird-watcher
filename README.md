@@ -55,3 +55,5 @@ And open your browser window on: `http://<pi-ip>:3000`.
 ## Credits
 
 This project was developed by Markiian Benovskyi.
+
+Favicon downloaded from Smashicons.
