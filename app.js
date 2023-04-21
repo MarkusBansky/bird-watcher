@@ -32,21 +32,16 @@ app.get('/', function (req, res) {
     res.render('index', { birds });
 });
 
-// Run background process
-const camProcess = spawn('node', ['background.js'], {
-    detached: true,
-    stdio: 'ignore',
-    signal
-});
-// detach from the child process
-camProcess.unref();
-// shutdown callback
-process.on('exit', function () {
-    camProcess.abort();
-});
-
 /* istanbul ignore next */
 if (!module.parent) {
     app.listen(3000);
-    console.log('Express started on port 3000');
+
+    // Run background process
+    spawn('node', ['background.js'], {
+        detached: true,
+        stdio: 'ignore',
+        signal
+    });
+
+    console.log('Express started on http://localhost:3000');
 }
