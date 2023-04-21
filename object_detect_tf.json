@@ -7,8 +7,5 @@
     "model_file": "./models/detect.tflite",
     "labels_file": "./models/labelmap.txt",
     "verbose": 1
-  },
-  "object_detect_draw_cv": {
-    "line_thickness": 2
   }
 }
