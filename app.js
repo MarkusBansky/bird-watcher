@@ -7,6 +7,11 @@ const { spawn } = require('node:child_process');
 const path = require('path');
 const fs = require('fs');
 
+// create /public/images path if it does not exist
+if (!fs.existsSync('./public/images')) {
+    fs.mkdirSync('./public/images');
+}
+
 // some propeties
 const controller = new AbortController();
 const { signal } = controller;
