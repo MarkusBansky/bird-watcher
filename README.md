@@ -26,20 +26,27 @@ Here you will find a short list of requirements for this project.
 
 First, copy this repository locally to your Pi.
 
+### Install
+
 Now you can install the required software:
 
-```
+```bash
 ./install.sh
 ```
 
-> In case you have any problems with the script, please file a bug.
+### Known Issues
+
+- During the instalation you might encounter an error message saying that process was terminated due to lack of memory. This is a known issue and this means that you dont have anough RAM to build the library and you can try to fix this by
+creating a swap file as described here: https://askubuntu.com/a/796997.
 
 > If you are running a different OS to the one specified or want to experiment with this project then you should modify the build stack.
+
+### Run
 
 After everything is set up without any errors you can
 run the project locally:
 
-```
+```bash
 node app.js
 ```
 
