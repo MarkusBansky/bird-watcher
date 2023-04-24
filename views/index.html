@@ -46,23 +46,34 @@
 
         <div class="row g-3">
           <% for (let i = 0; i < birds.length; i++) { %>
-          <div class="col-4">
+          <div class="col-6">
             <div class="card">
               <img
                 src="/images/<%= birds[i].thumbnail %>"
                 class="card-img-top"
                 alt="Bird image no.<%= i %>"
               />
-              <div class="card-body">
-                <a href="/images/<%= birds[i].img %>" class="btn btn-primary">
+              <div class="card-img-overlay">
+                <a
+                  href="/images/<%= birds[i].img %>"
+                  class="btn btn-sm btn-light"
+                >
                   <i class="bi bi-binoculars"></i>
                 </a>
                 <button
-                  class="btn btn-danger"
+                  class="btn btn-sm btn-danger"
                   onclick="deleteImage('<%= birds[i].img %>')"
                 >
                   <i class="bi bi-trash3-fill"></i>
                 </button>
+              </div>
+
+              <div class="card-body">
+                <p class="card-text">
+                  <small><b>Date:</b> <%= birds[i].birthtime %></small>
+                  <br />
+                  <small><b>Size:</b> <%= birds[i].size %></small>
+                </p>
               </div>
             </div>
           </div>

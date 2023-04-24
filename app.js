@@ -42,11 +42,14 @@ app.delete('/:id', function (req, res) {
 
     const files = fs.readdirSync('./public/images');
 
-    const bird = files.find(f => f.includes(filename));
+    const bird = files.find(f => f.includes(filename) && !f.includes('-thumb'));
     const birdThumb = files.find(f => f.includes(filename + '-thumb'));
 
-    fs.unlinkSync('./public/images/' + bird);
-    fs.unlinkSync('./public/images/' + birdThumb);
+    const p1 = path.join(__dirname, 'public/images', bird);
+    const p2 = path.join(__dirname, 'public/images', birdThumb);
+
+    fs.unlinkSync(p1);
+    fs.unlinkSync(p2);
 
     res.send('ok');
 });
@@ -64,3 +67,13 @@ if (!module.parent) {
 
     console.log('Express started on http://localhost:3000');
 }
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    controller.abort();
+    process.exit();
+});
+process.on('SIGTERM', () => {
+    controller.abort();
+    process.exit();
+});

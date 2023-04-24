@@ -1,4 +1,4 @@
-*.jpg
+public/images/*.jpg
 **/.DS_Store
 
 # Logs
