@@ -12,7 +12,11 @@ function getImgPath(str) {
 }
 
 function getThumbPath(str) {
-    return path.join(__dirname, IMAGES_PATH, str.replace(IMAGE_EXTENTION, '') + `${THUMBNAIL_SUFFIX}.jpg`);
+    return path.join(__dirname, IMAGES_PATH, getThumbName(str));
+}
+
+function getThumbName(str) {
+    return str.replace(IMAGE_EXTENTION, '') + `${THUMBNAIL_SUFFIX}.jpg`;
 }
 
 function createFolderIfNotExists() {
@@ -27,10 +31,10 @@ function getImages() {
         const stats = fs.statSync(getImgPath(img));
         return {
             img,
-            thumbnail: getThumbPath(img),
-            birthtime: stats.birthtime,
+            thumbnail: getThumbName(img),
+            birthtime: new Date(stats.birthtime).toLocaleString('en-GB'),
             size: humanFileSize(stats.size, true, 2),
-            hasThumbnail: files.find(f => f.includes(getThumbPath(img)) && f.includes(IMAGE_EXTENTION))
+            hasThumbnail: files.find(f => f.includes(getThumbName(img)) && f.includes(IMAGE_EXTENTION))
         };
     });
 }
