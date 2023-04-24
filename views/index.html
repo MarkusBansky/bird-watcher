@@ -18,6 +18,11 @@
       integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
       crossorigin="anonymous"
     />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css"
+    />
   </head>
 
   <body>
@@ -39,17 +44,30 @@
 
         <hr class="col-1 my-4" />
 
-        <ul div="birds">
+        <div class="row g-3">
           <% for (let i = 0; i < birds.length; i++) { %>
-          <li>
-            <img
-              src="/images/<%= birds[i] %>"
-              alt="Bird image no.<%= i %>"
-              width="240"
-            />
-          </li>
+          <div class="col-4">
+            <div class="card">
+              <img
+                src="/images/<%= birds[i].thumbnail %>"
+                class="card-img-top"
+                alt="Bird image no.<%= i %>"
+              />
+              <div class="card-body">
+                <a href="/images/<%= birds[i].img %>" class="btn btn-primary">
+                  <i class="bi bi-binoculars"></i>
+                </a>
+                <button
+                  class="btn btn-danger"
+                  onclick="deleteImage('<%= birds[i].img %>')"
+                >
+                  <i class="bi bi-trash3-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
           <% } %>
-        </ul>
+        </div>
       </div>
     </div>
 
@@ -57,6 +75,14 @@
       document.addEventListener("DOMContentLoaded", () => {
         console.log("Document loaded");
       });
+
+      function deleteImage(id) {
+        fetch("/" + id, {
+          method: "DELETE",
+        }).then(() => {
+          location.reload();
+        });
+      }
     </script>
 
     <script

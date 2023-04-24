@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 
 // Additional required modules
+const { getImages, generateThumbnails } = require('./functions');
 const { spawn } = require('node:child_process');
 const path = require('path');
 const fs = require('fs');
@@ -28,8 +29,26 @@ app.set('view engine', 'html');
 
 // Paths
 app.get('/', function (req, res) {
-    const birds = fs.readdirSync('./public/images');
+    generateThumbnails();
+    const birds = getImages();
     res.render('index', { birds });
+});
+
+app.delete('/:id', function (req, res) {
+    const { id } = req.params;
+    const filename = id.replace('.jpg', '');
+
+    console.log(filename);
+
+    const files = fs.readdirSync('./public/images');
+
+    const bird = files.find(f => f.includes(filename));
+    const birdThumb = files.find(f => f.includes(filename + '-thumb'));
+
+    fs.unlinkSync('./public/images/' + bird);
+    fs.unlinkSync('./public/images/' + birdThumb);
+
+    res.send('ok');
 });
 
 /* istanbul ignore next */
