@@ -3,15 +3,12 @@ const express = require('express');
 const app = express();
 
 // Additional required modules
-const { getImages, generateThumbnails } = require('./functions');
+const { createFolderIfNotExists, getImages, generateThumbnails, deleteImageAndThumbnail } = require('./functions');
 const { spawn } = require('node:child_process');
 const path = require('path');
-const fs = require('fs');
 
 // create /public/images path if it does not exist
-if (!fs.existsSync('./public/images')) {
-    fs.mkdirSync('./public/images');
-}
+createFolderIfNotExists();
 
 // some propeties
 const controller = new AbortController();
@@ -36,21 +33,7 @@ app.get('/', function (req, res) {
 
 app.delete('/:id', function (req, res) {
     const { id } = req.params;
-    const filename = id.replace('.jpg', '');
-
-    console.log(filename);
-
-    const files = fs.readdirSync('./public/images');
-
-    const bird = files.find(f => f.includes(filename) && !f.includes('-thumb'));
-    const birdThumb = files.find(f => f.includes(filename + '-thumb'));
-
-    const p1 = path.join(__dirname, 'public/images', bird);
-    const p2 = path.join(__dirname, 'public/images', birdThumb);
-
-    fs.unlinkSync(p1);
-    fs.unlinkSync(p2);
-
+    deleteImageAndThumbnail(id);
     res.send('ok');
 });
 

@@ -1,30 +1,55 @@
 const fs = require('fs');
+const path = require('path');
 const sharp = require('sharp');
 
 const IMG_WIDTH = 640;
+const IMAGES_PATH = './public/images';
+const THUMBNAIL_SUFFIX = '-thumb';
+const IMAGE_EXTENTION = '.jpg';
+
+function getImgPath(str) {
+    return path.join(__dirname, IMAGES_PATH, str);
+}
+
+function getThumbPath(str) {
+    return path.join(__dirname, IMAGES_PATH, str.replace(IMAGE_EXTENTION, '') + `${THUMBNAIL_SUFFIX}.jpg`);
+}
+
+function createFolderIfNotExists() {
+    if (!fs.existsSync(IMAGES_PATH)) {
+        fs.mkdirSync(IMAGES_PATH);
+    }
+}
 
 function getImages() {
-    const files = fs.readdirSync('./public/images');
-    return files.filter(f => !f.includes('-thumb')).map(img => {
-        const stats = fs.statSync('./public/images/' + img);
-        return { img, thumbnail: img.split('.')[0] + '-thumb.jpg', birthtime: stats.birthtime, size: humanFileSize(stats.size, true, 2) };
+    const files = fs.readdirSync(IMAGES_PATH);
+    return files.filter(f => !f.includes(THUMBNAIL_SUFFIX)).map(img => {
+        const stats = fs.statSync(getImgPath(img));
+        return {
+            img,
+            thumbnail: getThumbPath(img),
+            birthtime: stats.birthtime,
+            size: humanFileSize(stats.size, true, 2),
+            hasThumbnail: files.find(f => f.includes(getThumbPath(img)) && f.includes(IMAGE_EXTENTION))
+        };
     });
 }
 
 function generateThumbnails() {
-    const files = fs.readdirSync('./public/images');
-    const birds = files.filter(f => !f.includes('-thumb')).map(img => ({
-        img,
-        hasThumbnail: files.find(f => f.includes(img.split('.')[0] + '-thumb') && f.includes('.jpg'))
-    }));
+    const files = getImages();
 
-    birds.forEach(bird => {
+    files.forEach(bird => {
         if (!bird.hasThumbnail) {
-            sharp('./public/images/' + bird.img)
+            sharp(getImgPath(bird.img))
                 .resize({ width: IMG_WIDTH })
-                .toFile('./public/images/' + bird.img.split('.')[0] + '-thumb.jpg');
+                .toFile(getThumbPath(bird.img));
         }
     });
+}
+
+function deleteImageAndThumbnail(filename) {
+    fs.unlinkSync(getImgPath(filename));
+    fs.unlinkSync(getThumbPath(filename));
 }
 
 function humanFileSize(bytes, si = false, dp = 1) {
@@ -50,6 +75,8 @@ function humanFileSize(bytes, si = false, dp = 1) {
 }
 
 module.exports = {
+    createFolderIfNotExists,
+    deleteImageAndThumbnail,
     getImages,
     generateThumbnails,
     humanFileSize
