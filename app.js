@@ -3,7 +3,13 @@ const express = require('express');
 const app = express();
 
 // Additional required modules
-const { createFolderIfNotExists, getImages, generateThumbnails, deleteImageAndThumbnail } = require('./functions');
+const {
+    makeSnapshot,
+    createFolderIfNotExists,
+    getImages,
+    generateThumbnails,
+    deleteImageAndThumbnail
+} = require('./functions');
 const { spawn } = require('node:child_process');
 const path = require('path');
 
@@ -34,6 +40,11 @@ app.get('/', function (req, res) {
 app.delete('/:id', function (req, res) {
     const { id } = req.params;
     deleteImageAndThumbnail(id);
+    res.send('ok');
+});
+
+app.post('/snapshot', function (req, res) {
+    makeSnapshot();
     res.send('ok');
 });
 

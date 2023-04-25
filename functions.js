@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+const shell = require('shelljs');
 
 const IMG_WIDTH = 640;
 const IMAGES_PATH = './public/images';
@@ -78,10 +79,15 @@ function humanFileSize(bytes, si = false, dp = 1) {
     return bytes.toFixed(dp) + ' ' + units[u];
 }
 
+function makeSnapshot() {
+    shell.exec('libcamera-jpeg -o ./public/images/snapshot-%Y%m%d%H%M%S).jpg')
+}
+
 module.exports = {
     createFolderIfNotExists,
     deleteImageAndThumbnail,
     getImages,
     generateThumbnails,
-    humanFileSize
+    humanFileSize,
+    makeSnapshot
 }
