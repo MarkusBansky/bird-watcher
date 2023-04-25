@@ -50,7 +50,7 @@ function backgroundProcess() {
         if (!running) {
             console.log('Launching libcamera-detect process...');
             // Run background process
-            shell.exec('libcamera-detect -t 0 -o ./public/images/bird-%06d.jpg --lores-width 800 --lores-height 600 --post-process-file object_detect_tf.json --object bird', function (code, stdout, stderr) {
+            shell.exec('libcamera-detect -t 0 -o ./public/images/bird-%Y%m%d_%H%M%S.jpg --lores-width 800 --lores-height 600 --post-process-file object_detect_tf.json --object bird', function (code, stdout, stderr) {
                 console.log('Exit code:', code);
                 console.log('Program output:', stdout);
                 console.log('Program stderr:', stderr);
