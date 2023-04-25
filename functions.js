@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const shell = require('shelljs');
+const { exec } = require('node:child_process');
 
 const IMG_WIDTH = 640;
 const IMAGES_PATH = './public/images';
@@ -79,8 +80,18 @@ function humanFileSize(bytes, si = false, dp = 1) {
     return bytes.toFixed(dp) + ' ' + units[u];
 }
 
-function makeSnapshot() {
-    shell.exec('libcamera-jpeg -o ./public/images/snapshot-%Y%m%d%H%M%S).jpg')
+function isRunning(query, cb) {
+    let platform = process.platform;
+    let cmd = '';
+    switch (platform) {
+        case 'win32': cmd = `tasklist`; break;
+        case 'darwin': cmd = `ps -ax | grep ${query}`; break;
+        case 'linux': cmd = `ps -A`; break;
+        default: break;
+    }
+    exec(cmd, (err, stdout, stderr) => {
+        cb(stdout.toLowerCase().indexOf(query.toLowerCase()) > -1);
+    });
 }
 
 module.exports = {
@@ -89,5 +100,5 @@ module.exports = {
     getImages,
     generateThumbnails,
     humanFileSize,
-    makeSnapshot
+    isRunning
 }

@@ -1,18 +1,20 @@
+const TEN_SECONDS = 10000;
+
 // Require express
 const express = require('express');
 const app = express();
 
 // Additional required modules
 const {
-    makeSnapshot,
+    isRunning,
     createFolderIfNotExists,
     getImages,
     generateThumbnails,
     deleteImageAndThumbnail
 } = require('./functions');
-const { isRunning, runCameraDetect } = require('./background');
 const path = require('path');
 const { clearInterval } = require('timers');
+const { spawn } = require('node:child_process');
 
 // create /public/images path if it does not exist
 createFolderIfNotExists();
@@ -44,11 +46,6 @@ app.delete('/:id', function (req, res) {
     res.send('ok');
 });
 
-app.post('/snapshot', function (req, res) {
-    makeSnapshot();
-    res.send('ok');
-});
-
 /* istanbul ignore next */
 if (!module.parent) {
     app.listen(3000);
@@ -60,10 +57,15 @@ if (!module.parent) {
 const detectLoop = setInterval(() => {
     isRunning('libcamera-detect', (running) => {
         if (!running) {
-            runCameraDetect(signal);
+            // Run background process
+            spawn('node', ['background.js'], {
+                detached: true,
+                stdio: 'ignore',
+                signal
+            });
         }
     });
-}, 1000);
+}, TEN_SECONDS);
 
 // Graceful shutdown
 process.on('SIGINT', () => {

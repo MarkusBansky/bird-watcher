@@ -42,12 +42,6 @@
           <a href="https://markiian-benovskyi.com">Markiian Benovskyi</a>.
         </p>
 
-        <div class="mt-3 mb-2">
-          <button class="btn btn-sm btn-light" onclick="manualSnapshot()">
-            Take manual snapshot
-          </button>
-        </div>
-
         <hr class="col-1 my-4" />
 
         <div class="row g-3">
@@ -96,16 +90,6 @@
       function deleteImage(id) {
         fetch("/" + id, {
           method: "DELETE",
-        }).then(() => {
-          setTimeout(() => {
-            location.reload();
-          }, 1000);
-        });
-      }
-
-      function manualSnapshot() {
-        fetch("/snapshot", {
-          method: "POST",
         }).then(() => {
           setTimeout(() => {
             location.reload();
