@@ -46,26 +46,33 @@ app.delete('/:id', function (req, res) {
     res.send('ok');
 });
 
-/* istanbul ignore next */
-if (!module.parent) {
-    app.listen(3000);
-
-    console.log('Express started on http://localhost:3000');
-}
-
-// Run background process
-const detectLoop = setInterval(() => {
+// Background process
+function backgroundProcess() {
+    // check if libcamera is running
     isRunning('libcamera-detect', (running) => {
         if (!running) {
             // Run background process
             spawn('node', ['background.js'], {
                 detached: true,
-                stdio: 'ignore',
                 signal
             });
         }
     });
-}, TEN_SECONDS);
+}
+
+let detectLoop;
+/* istanbul ignore next */
+if (!module.parent) {
+    app.listen(3000);
+
+    // create a loop to check if libcamera is running
+    detectLoop = setInterval(backgroundProcess, TEN_SECONDS);
+    // run it on the first start of the app
+    backgroundProcess();
+
+    // log to console to let us know it's working
+    console.log('Express started on http://localhost:3000');
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {
