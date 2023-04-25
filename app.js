@@ -13,15 +13,11 @@ const {
     deleteImageAndThumbnail
 } = require('./functions');
 const path = require('path');
+const shell = require('shelljs');
 const { clearInterval } = require('timers');
-const { spawn } = require('node:child_process');
 
 // create /public/images path if it does not exist
 createFolderIfNotExists();
-
-// some propeties
-const controller = new AbortController();
-const { signal } = controller;
 
 // Set up the server
 app.engine('.html', require('ejs').__express);
@@ -50,12 +46,16 @@ app.delete('/:id', function (req, res) {
 function backgroundProcess() {
     // check if libcamera is running
     isRunning('libcamera-detect', (running) => {
+        console.log(`libcamera-detect health check: ${running}`);
         if (!running) {
+            console.log('Launching libcamera-detect process...');
             // Run background process
-            spawn('node', ['background.js'], {
-                detached: true,
-                signal
+            shell.exec('libcamera-detect -t 0 -o ./public/images/bird-%06d.jpg --lores-width 800 --lores-height 600 --post-process-file object_detect_tf.json --object bird', function (code, stdout, stderr) {
+                console.log('Exit code:', code);
+                console.log('Program output:', stdout);
+                console.log('Program stderr:', stderr);
             });
+            console.log('Process launched.');
         }
     });
 }
@@ -76,12 +76,10 @@ if (!module.parent) {
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    controller.abort();
     clearInterval(detectLoop);
     process.exit();
 });
 process.on('SIGTERM', () => {
-    controller.abort();
     clearInterval(detectLoop);
     process.exit();
 });
