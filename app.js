@@ -10,8 +10,9 @@ const {
     generateThumbnails,
     deleteImageAndThumbnail
 } = require('./functions');
-const { spawn } = require('node:child_process');
+const { isRunning, runCameraDetect } = require('./background');
 const path = require('path');
+const { clearInterval } = require('timers');
 
 // create /public/images path if it does not exist
 createFolderIfNotExists();
@@ -52,22 +53,26 @@ app.post('/snapshot', function (req, res) {
 if (!module.parent) {
     app.listen(3000);
 
-    // Run background process
-    spawn('node', ['background.js'], {
-        detached: true,
-        stdio: 'ignore',
-        signal
-    });
-
     console.log('Express started on http://localhost:3000');
 }
+
+// Run background process
+const detectLoop = setInterval(() => {
+    isRunning('libcamera-detect', (running) => {
+        if (!running) {
+            runCameraDetect(signal);
+        }
+    });
+}, 1000);
 
 // Graceful shutdown
 process.on('SIGINT', () => {
     controller.abort();
+    clearInterval(detectLoop);
     process.exit();
 });
 process.on('SIGTERM', () => {
     controller.abort();
+    clearInterval(detectLoop);
     process.exit();
 });
