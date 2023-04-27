@@ -41,6 +41,14 @@ function getImages() {
     });
 }
 
+function wait(ms) {
+    const start = Date.now();
+    let now = start;
+    while (now - start < ms) {
+        now = Date.now();
+    }
+}
+
 function generateThumbnails() {
     const files = getImages();
 
@@ -49,6 +57,7 @@ function generateThumbnails() {
             sharp(getImgPath(bird.img))
                 .resize({ width: IMG_WIDTH })
                 .toFile(getThumbPath(bird.img));
+            wait(1000);
         }
     });
 }
