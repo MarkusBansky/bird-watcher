@@ -1,4 +1,5 @@
 const TEN_SECONDS = 10000;
+const CACHE_TIME = 86400000 * 30 // the time you want it to be cached in milliseconds
 
 // Require express
 const express = require('express');
@@ -22,7 +23,9 @@ createFolderIfNotExists();
 // Set up the server
 app.engine('.html', require('ejs').__express);
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+    maxAge: CACHE_TIME
+}));
 
 // Without this you would need to
 // supply the extension to res.render()
