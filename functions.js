@@ -54,10 +54,14 @@ function generateThumbnails() {
 
     files.forEach(bird => {
         if (!bird.hasThumbnail) {
-            sharp(getImgPath(bird.img))
-                .resize({ width: IMG_WIDTH })
-                .toFile(getThumbPath(bird.img));
-            wait(1000);
+            try {
+                sharp(getImgPath(bird.img))
+                    .resize({ width: IMG_WIDTH })
+                    .toFile(getThumbPath(bird.img));
+                wait(1000);
+            } catch (e) {
+                console.error(e);
+            }
         }
     });
 }
